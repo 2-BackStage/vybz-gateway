@@ -35,8 +35,8 @@ jobs:
           echo "application.yml 내용:"
           cat src/main/resources/application.yml
           
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service .
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }} .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }}
 
       # 4. EC2에 SSH 접속 & 배포
       - name: Deploy to EC2 via SSH
@@ -48,8 +48,11 @@ jobs:
           script: |
             cd ~/vybz/gateway-service
             
+            docker-compose down
+            docker-compose rm -f
             docker-compose pull gateway
             docker-compose up -d gateway
+            docker image prune --filter "dangling=true" -f
 
       # 5-1. 성공 시 알림
       - name: Send Discord Success Notification
