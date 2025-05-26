@@ -50,7 +50,6 @@ jobs:
             
             docker-compose pull gateway
             docker-compose up -d gateway
-            docker image prune -f
 
       # 5-1. 성공 시 알림
       - name: Send Discord Success Notification
