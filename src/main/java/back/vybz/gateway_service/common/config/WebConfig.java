@@ -14,4 +14,3 @@ public class WebConfig implements WebFluxConfigurer {
                 .allowedMethods("*");
     }
 }
-
