@@ -25,7 +25,6 @@ dependencies {
 	// Swagger
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webflux-ui', version: '2.2.0'
 
-
 	//	jwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
