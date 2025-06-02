@@ -53,7 +53,7 @@ jobs:
             docker-compose rm -f
             docker-compose pull gateway
             docker-compose up -d gateway
-            docker image prune --filter "dangling=true" -f
+            docker image prune -a
 
       # 5-1. 성공 시 알림
       - name: Send Discord Success Notification
