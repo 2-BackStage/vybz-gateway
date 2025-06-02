@@ -31,8 +31,6 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-
-    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
@@ -43,7 +41,6 @@ public class JwtProvider {
         }
     }
 
-    // 토큰에서 uuid 추출
     public String getUuid(String token) {
         var claim = Jwts.parser()
                 .verifyWith(key)
