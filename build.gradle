@@ -23,7 +23,7 @@ ext {
 
 dependencies {
 	// Swagger
-	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webflux-ui', version: '2.2.0'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webflux-ui', version: '2.7.0'
 
 	//	jwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
