@@ -44,22 +44,32 @@ public class JwtProvider {
     }
 
     // 토큰에서 uuid 추출
-    public String getUserUuid(String token) {
-        return Jwts.parser()
+    public String getUuid(String token) {
+        var claim = Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .get("uuid", String.class);
+                .getPayload();
+
+        if (claim.get("user_uuid") != null) {
+            return claim.get("user_uuid", String.class);
+        } else {
+            return claim.get("busker_uuid", String.class);
+        }
     }
 
-    public String getUserRole(String token) {
-        return Jwts.parser()
+    public String getUserType(String token) {
+        var claims = Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .get("role", String.class);
+                .getPayload();
+
+        if (claims.get("user_uuid") != null) {
+            return "user";
+        } else {
+            return "busker";
+        }
     }
 
     public SecretKey getSignKey() {

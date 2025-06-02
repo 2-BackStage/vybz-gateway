@@ -65,13 +65,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 return handleException(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
             }
 
-            // ✅ 사용자 정보 추출 후 헤더로 전달
-            String uuid = jwtProvider.getUserUuid(token);
-            String role = jwtProvider.getUserRole(token);
+            String uuid = jwtProvider.getUuid(token);
+            String userType = jwtProvider.getUserType(token);
 
             ServerHttpRequest modifiedRequest = request.mutate()
                     .header("X-User-Id", uuid)
-                    .header("X-User-Role", role)
+                    .header("X-User-Type", userType)
                     .build();
 
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
