@@ -48,6 +48,7 @@ jobs:
           script: |
             cd ~/vybz/gateway-service
             
+            export GATEWAY_IMAGE_TAG=${{ github.sha }}
             docker-compose down
             docker-compose rm -f
             docker-compose pull gateway
