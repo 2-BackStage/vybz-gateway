@@ -21,22 +21,38 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       # 3. 도커 이미지 빌드 & 푸시 - gateway-service
-      - name: Build & Push gateway-service
-        # working-directory: ./msa-gateway-service
+#      - name: Build & Push gateway-service
+#        # working-directory: ./msa-gateway-service
+#        run: |
+#
+#          # resources 디렉토리가 없을 경우 생성
+#          mkdir -p src/main/resources
+#
+#          # GitHub Secrets에 등록한 application.yml 내용을 복사
+#          echo "${{ secrets.GATEWAY_APPLICATION_YML }}" | base64 -d > src/main/resources/application.yml
+#
+#          # 디코딩된 application.yml 확인
+#          echo "application.yml 내용:"
+#          cat src/main/resources/application.yml
+#
+#          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }} .
+#          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }}
+
+      - name: Build & Push gateway-service (with retry)
         run: |
-          
-          # resources 디렉토리가 없을 경우 생성
           mkdir -p src/main/resources 
           
-          # GitHub Secrets에 등록한 application.yml 내용을 복사
           echo "${{ secrets.GATEWAY_APPLICATION_YML }}" | base64 -d > src/main/resources/application.yml
           
-          # 디코딩된 application.yml 확인
           echo "application.yml 내용:"
           cat src/main/resources/application.yml
-          
+      
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }} .
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }}
+      
+          for i in {1..3}; do
+            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }} && break || sleep 5
+          done
+
 
       # 4. EC2에 SSH 접속 & 배포
       - name: Deploy to EC2 via SSH
