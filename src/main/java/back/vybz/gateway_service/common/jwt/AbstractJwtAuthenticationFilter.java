@@ -10,10 +10,14 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
 @Slf4j
-@RequiredArgsConstructor
 public abstract class AbstractJwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthFilterConfig> {
 
     protected final JwtProvider jwtProvider;
+
+    public AbstractJwtAuthenticationFilter(JwtProvider jwtProvider) {
+        super(JwtAuthFilterConfig.class);
+        this.jwtProvider = jwtProvider;
+    }
 
     @Override
     public GatewayFilter apply(JwtAuthFilterConfig config) {
