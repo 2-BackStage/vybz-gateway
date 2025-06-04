@@ -1,5 +1,6 @@
 package back.vybz.gateway_service.common.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 
 import javax.crypto.SecretKey;
+import java.util.Date;
 import java.util.Objects;
 
 @Slf4j
@@ -33,7 +35,17 @@ public class JwtProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            Claims claims = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            if(claims.getExpiration().before(new Date())) {
+                log.warn("❌ Token expired at {}", claims.getExpiration());
+                return false;
+            }
+
             return true;
         } catch (Exception e) {
             log.warn("❌ Invalid token: {}", e.getMessage());
@@ -41,32 +53,22 @@ public class JwtProvider {
         }
     }
 
-    public String getUuid(String token) {
-        var claim = Jwts.parser()
+    public String getUserUuid(String token) {
+        return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload();
-
-        if (claim.get("user_uuid") != null) {
-            return claim.get("user_uuid", String.class);
-        } else {
-            return claim.get("busker_uuid", String.class);
-        }
+                .getPayload()
+                .get("user_uuid", String.class);
     }
 
-    public String getUserType(String token) {
-        var claims = Jwts.parser()
+    public String getBuskerUuid(String token) {
+        return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload();
-
-        if (claims.get("user_uuid") != null) {
-            return "user";
-        } else {
-            return "busker";
-        }
+                .getPayload()
+                .get("busker_uuid", String.class);
     }
 
     public SecretKey getSignKey() {
