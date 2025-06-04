@@ -3,7 +3,6 @@ package back.vybz.gateway_service.common.jwt;
 import back.vybz.gateway_service.common.config.JwtAuthFilterConfig;
 import back.vybz.gateway_service.common.exception.BaseResponseStatus;
 import back.vybz.gateway_service.common.util.JwtFilterUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;

@@ -1,5 +1,7 @@
 package back.vybz.gateway_service.common.jwt;
 
+import back.vybz.gateway_service.common.exception.BaseException;
+import back.vybz.gateway_service.common.exception.BaseResponseStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -54,21 +56,43 @@ public class JwtProvider {
     }
 
     public String getUserUuid(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get("user_uuid", String.class);
+        Claims claims = validateAndExtractClaims(token);
+        String uuid = claims.get("user_uuid", String.class);
+        if (uuid == null) {
+            throw new BaseException(BaseResponseStatus.NOT_USER_UUID);
+        }
+        return uuid;
     }
 
     public String getBuskerUuid(String token) {
+        Claims claims = validateAndExtractClaims(token);
+        String uuid = claims.get("busker_uuid", String.class);
+        if (uuid == null) {
+            throw new BaseException(BaseResponseStatus.NOT_BUSKER_UUID);
+        }
+        return uuid;
+    }
+
+    public String getUuidFromEither(String token) {
+        Claims claims = validateAndExtractClaims(token);
+        String userUuid = claims.get("user_uuid", String.class);
+        String buskerUuid = claims.get("busker_uuid", String.class);
+
+        if (userUuid != null && buskerUuid != null) {
+            throw new BaseException(BaseResponseStatus.DUPLICATE_UUID);
+        }
+        if (userUuid != null) return userUuid;
+        if (buskerUuid != null) return buskerUuid;
+
+        throw new BaseException(BaseResponseStatus.NO_UUID_FOUND);
+    }
+
+    public Claims validateAndExtractClaims(String token) {
         return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .get("busker_uuid", String.class);
+                .getPayload();
     }
 
     public SecretKey getSignKey() {
