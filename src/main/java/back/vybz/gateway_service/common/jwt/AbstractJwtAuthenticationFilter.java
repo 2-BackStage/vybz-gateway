@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 public abstract class AbstractJwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthFilterConfig> {
@@ -49,7 +50,13 @@ public abstract class AbstractJwtAuthenticationFilter extends AbstractGatewayFil
                     .header(getHeaderName(),  uuid)
                     .build();
 
-            return chain.filter(exchange.mutate().request(modifiedRequest).build());
+            System.out.println("2");
+
+            Mono<Void> f1 = chain.filter(exchange.mutate().request(modifiedRequest).build());
+
+            System.out.println("3");
+
+            return f1;
         };
     }
 
