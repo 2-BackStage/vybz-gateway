@@ -22,6 +22,7 @@ public abstract class AbstractJwtAuthenticationFilter extends AbstractGatewayFil
     public GatewayFilter apply(JwtAuthFilterConfig config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+            System.out.println("1");
             String authorizationHeader = request.getHeaders().getFirst("Authorization");
             String path = request.getURI().getPath();
 
@@ -35,6 +36,8 @@ public abstract class AbstractJwtAuthenticationFilter extends AbstractGatewayFil
                 return JwtFilterUtils.handleJwtError(exchange, BaseResponseStatus.NO_JWT_TOKEN);
             }
 
+            System.out.println(authorizationHeader);
+
             String token = authorizationHeader.replace("Bearer ", "");
             if (!jwtProvider.validateToken(token)) {
                 return JwtFilterUtils.handleJwtError(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
@@ -43,7 +46,7 @@ public abstract class AbstractJwtAuthenticationFilter extends AbstractGatewayFil
             String uuid = extractUuid(token);
 
             ServerHttpRequest modifiedRequest = request.mutate()
-                    .header(getHeaderName(), uuid)
+                    .header(getHeaderName(),  uuid)
                     .build();
 
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
