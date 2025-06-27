@@ -30,10 +30,6 @@ jobs:
           # GitHub Secrets에 등록한 application.yml 내용을 복사
           echo "${{ secrets.GATEWAY_APPLICATION_YML }}" | base64 -d > src/main/resources/application.yml
           
-          # 디코딩된 application.yml 확인
-          echo "application.yml 내용:"
-          cat src/main/resources/application.yml
-          
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }} .
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gateway-service:${{ github.sha }}
 
